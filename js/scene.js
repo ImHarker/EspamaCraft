@@ -2,8 +2,8 @@ import * as THREE from 'three';
 
 var cena = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
-var camaraPerspetiva =new  THREE.PerspectiveCamera(75, 16/9, 0.1, 500);
-
+var camaraPerspetiva =new  THREE.PerspectiveCamera(90, 16/9, 0.1, 500);
+camaraPerspetiva.position.set(0, 25, 0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 

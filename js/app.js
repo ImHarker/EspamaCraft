@@ -5,10 +5,7 @@ import {cena, renderer, camaraPerspetiva} from './scene.js';
 import {movement} from './input.js'
 
 
-var geometriaCubo = new THREE.BoxGeometry(1,1,1);
-var textura = new THREE.TextureLoader().load("./img/boxImage.jpg");
-var materialTextura = new THREE.MeshStandardMaterial({map: textura});
-var meshCubo = new THREE.Mesh(geometriaCubo, materialTextura);
+
 
 let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
@@ -17,8 +14,7 @@ document.addEventListener('DOMContentLoaded', Start);
 
 
 function Start(){
-    cena.add(meshCubo);
-    var focoLuz = new THREE.AmbientLight('#444444', 1);
+    var focoLuz = new THREE.AmbientLight('#666666', 1);
     cena.add(focoLuz);
     let dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(sunDir.x, sunDir.y, sunDir.z);
@@ -27,8 +23,6 @@ function Start(){
     renderer.render(cena, camaraPerspetiva);
     requestAnimationFrame(loop);
 }
-
-meshCubo.translateZ(-6);
 
 
 var skyboxGeo = new THREE.BoxGeometry(200, 200, 200);
@@ -56,8 +50,6 @@ var skybox = new THREE.Mesh(skyboxGeo, skyboxShader);
 cena.add(skybox);
 
 function loop(){
-    meshCubo.rotateY(Math.PI/180 * 1);
-
     skyboxShader.uniforms.enableSun.value = enableSun;
     skyboxShader.needsUpdate = true;
 
