@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import vertCode from './shaders/skyboxVert.js';
 import fragCode from './shaders/skyboxFrag.js';
-import {cena, renderer, camaraPerspetiva} from './scene.js';
+import {cena, renderer, camaraPerspetiva, stats} from './scene.js';
 import {movement} from './input.js'
 
 
@@ -55,6 +55,7 @@ function loop(){
 
     movement();
 
+    stats.update();
     renderer.render(cena, camaraPerspetiva);
 
     requestAnimationFrame(loop);

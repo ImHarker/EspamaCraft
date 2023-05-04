@@ -23,10 +23,9 @@ materialArrayGrass.push(new THREE.MeshStandardMaterial( {map: texture_side }));
 materialArrayGrass.push(new THREE.MeshStandardMaterial( {map: texture_side }));
 
 
-
-let frequency = 0.025;
+let frequency = 0.03;
 let amplitude = 16;
-let chunkSize = 16;
+let chunkSize = 100;
 
 for(let z = 0; z < chunkSize; z++)
 {
@@ -37,12 +36,12 @@ for(let z = 0; z < chunkSize; z++)
             cubo.position.set(x, y ,z);
             cena.add(cubo);
             y--;
-        while(y > 0){
-            let cubo = new THREE.Mesh(geometriaCubo, new THREE.MeshStandardMaterial( {map: textura }));
-            cubo.position.set(x, y ,z);
-            cena.add(cubo);
-            y--;
-        }
+        // while(y > 0){
+        //     let cubo = new THREE.Mesh(geometriaCubo, new THREE.MeshStandardMaterial( {map: textura }));
+        //     cubo.position.set(x, y ,z);
+        //     cena.add(cubo);
+        //     y--;
+        // }
     
     }
 }
