@@ -1,5 +1,5 @@
 import { PointerLockControls } from 'PointerLockControls';
-import {cena, renderer, camaraPerspetiva} from './scene.js';
+import { cena, renderer, camaraPerspetiva } from './scene.js';
 
 
 const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
@@ -14,7 +14,7 @@ controls.addEventListener('lock', function () { });
 controls.addEventListener('unlock', function () { });
 document.addEventListener(
     'click',
-    function (){
+    function () {
         controls.lock();
     },
     false
@@ -23,53 +23,55 @@ document.addEventListener(
 document.addEventListener("keydown", onDocumentKeyDown, false);
 document.addEventListener("keyup", onDocumentKeyUp, false);
 
-function onDocumentKeyDown(event){
+function onDocumentKeyDown(event) {
     var keycode = event.which;
 
-    if(keycode == 87){
+    if (keycode == 87) {
         up = true;
     }
-    else if(keycode == 83){
+    else if (keycode == 83) {
         down = true;
     }
-    else if(keycode == 65){
+    else if (keycode == 65) {
         left = true;
     }
-    else if(keycode == 68){
+    else if (keycode == 68) {
         right = true;
     }
-    else if(keycode == 32){
+    else if (keycode == 32) {
         camaraPerspetiva.position.y += 1;
     }
-    else if(keycode == 16){
+    else if (keycode == 16) {
         camaraPerspetiva.position.y -= 1;
     }
-    else if(keycode == 70){
+    else if (keycode == 70) {
         enableSun = !enableSun;
     }
 }
 
-function onDocumentKeyUp(event){
+function onDocumentKeyUp(event) {
     var keycode = event.which;
 
-    if(keycode == 87){
+    if (keycode == 87) {
         up = false;
     }
-    else if(keycode == 83){
+    else if (keycode == 83) {
         down = false;
     }
-    else if(keycode == 65){
+    else if (keycode == 65) {
         left = false;
     }
-    else if(keycode == 68){
+    else if (keycode == 68) {
         right = false;
     }
 }
 
 
-export function movement(){
-    if(up) controls.moveForward(0.25);
-    if(down) controls.moveForward(-0.25);
-    if(left) controls.moveRight(-0.25);
-    if(right) controls.moveRight(0.25);
+export function movement() {
+    document.getElementById('Coords').innerHTML = `X: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`;
+
+    if (up) controls.moveForward(0.25);
+    if (down) controls.moveForward(-0.25);
+    if (left) controls.moveRight(-0.25);
+    if (right) controls.moveRight(0.25);
 }

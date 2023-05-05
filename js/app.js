@@ -34,7 +34,7 @@ var skyboxShader = new THREE.ShaderMaterial({
 
         sunDir: { value: sunDir },
         sunIntensity: { value: 0.01 },
-        sunColor: { value: new THREE.Color(0xffffff) },
+        sunColor: { value: new THREE.Color(0xffff00) },
 
         enableSun: { value: enableSun }
     },
@@ -58,7 +58,9 @@ function loop() {
 
     movement();
 
-    if (Math.floor(camaraPerspetiva.position.x / 16) != lastPosX || Math.floor(camaraPerspetiva.position.z / 16) != lastPosZ) terrain.Update();
+    if (lastPosX != Math.floor(camaraPerspetiva.position.x / 16) || lastPosZ != Math.floor(camaraPerspetiva.position.z / 16)) {
+        terrain.Update();
+    }
 
     lastPosX = Math.floor(camaraPerspetiva.position.x / 16);
     lastPosZ = Math.floor(camaraPerspetiva.position.z / 16);

@@ -21,11 +21,13 @@ export class Terrain {
 
         this.blockAmount = [];
         this.mesh = [];
+        let counter = [];
 
         let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
         Object.keys(BlockType).forEach(_ => {
             this.blockAmount.push(0);
+            counter.push(0);
         });
 
         for (let i in this.chunks) {
@@ -53,7 +55,6 @@ export class Terrain {
         }
 
         let dummy = new THREE.Object3D();
-        let counter = 0;
 
         for (let i in this.chunks) {
             for (let j in this.chunks[i]) {
@@ -65,7 +66,8 @@ export class Terrain {
                             if (!block.isActive) continue;
                             dummy.position.set(x + chunk.offsetX, y, z + chunk.offsetZ);
                             dummy.updateMatrix();
-                            this.mesh[block.type.id].setMatrixAt(counter++, dummy.matrix);
+
+                            this.mesh[block.type.id].setMatrixAt(counter[block.type.id]++, dummy.matrix);
                         }
                     }
                 }
@@ -76,12 +78,6 @@ export class Terrain {
             this.mesh[i].instanceMatrix.needsUpdate = true;
             this.mesh[i].computeBoundingSphere();
         }
-
-        let blockAmoun = 0;
-        for (let i = 0; i < this.blockAmount.length; i++) {
-            blockAmoun += this.blockAmount[i];
-        }
-        console.log(blockAmoun);
     }
 
     Update() {
