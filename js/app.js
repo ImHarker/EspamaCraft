@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 import vertCode from './shaders/skyboxVert.js';
 import fragCode from './shaders/skyboxFrag.js';
-import {cena, renderer, camaraPerspetiva, stats} from './scene.js';
-import {movement} from './input.js'
-
-
-
+import { cena, renderer, camaraPerspetiva, stats } from './scene.js';
+import { movement } from './input.js'
+import { Terrain } from './terrain/terrain.js';
 
 let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
@@ -13,7 +11,7 @@ let sunDir = new THREE.Vector3(0.5, 0.5, 0);
 document.addEventListener('DOMContentLoaded', Start);
 
 
-function Start(){
+function Start() {
     var focoLuz = new THREE.AmbientLight('#666666', 1);
     cena.add(focoLuz);
     let dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -25,7 +23,7 @@ function Start(){
 }
 
 
-var skyboxGeo = new THREE.BoxGeometry(200, 200, 200);
+var skyboxGeo = new THREE.BoxGeometry(400, 400, 400);
 
 var skyboxShader = new THREE.ShaderMaterial({
     uniforms: {
@@ -49,11 +47,24 @@ var skybox = new THREE.Mesh(skyboxGeo, skyboxShader);
 
 cena.add(skybox);
 
-function loop(){
+let lastPosX = 0;
+let lastPosZ = 0;
+
+const terrain = new Terrain();
+
+function loop() {
     skyboxShader.uniforms.enableSun.value = enableSun;
     skyboxShader.needsUpdate = true;
 
     movement();
+
+    if (Math.floor(camaraPerspetiva.position.x / 16) != lastPosX || Math.floor(camaraPerspetiva.position.z / 16) != lastPosZ) terrain.Update();
+
+    lastPosX = Math.floor(camaraPerspetiva.position.x / 16);
+    lastPosZ = Math.floor(camaraPerspetiva.position.z / 16);
+
+    skybox.position.set(camaraPerspetiva.position.x, camaraPerspetiva.position.y, camaraPerspetiva.position.z);
+    skybox.needsUpdate = true;
 
     stats.update();
     renderer.render(cena, camaraPerspetiva);
