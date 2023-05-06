@@ -6,13 +6,12 @@ import * as THREE from 'three';
 
 export class Chunk {
     chunkSize = 16;
-    chunkHeight = 32;
+    chunkHeight = 64;
     blockAmount = [];
 
     constructor(offsetX, offsetZ) {
         this.frequency = 0.03;
         this.amplitude = 16;
-        this.render = false;
 
         this.offsetX = offsetX * this.chunkSize;
         this.offsetZ = offsetZ * this.chunkSize;

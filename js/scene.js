@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Stats } from './Stats.js'
+import { Time } from './time.js';
 
 var cena = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
@@ -9,46 +9,44 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 
 let div = document.createElement('div');
-div.id = 'Coords';
-const newContent = document.createTextNode(`X: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`);
+div.id = 'Stats';
+const newContent = document.createTextNode(`FPS: ${Math.floor(1 / Time.deltaTime)}\nX: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`);
 div.appendChild(newContent);
 div.style.position = 'absolute';
 div.style.whiteSpace = 'pre-wrap';
 div.style.top = '5px';
 div.style.fontFamily = "Lucida Console, Courier New, monospace";
 div.style.fontWeight = 'bold';
-div.style.right = '5px';
-div.style.width = '120px';
-div.style.border = '1px solid black';
+div.style.left = '5px';
+div.style.width = '150px';
+div.style.color = 'white';
+div.style.textShadow = '-1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000';
 div.style.padding = '5px';
 div.style.textAlign = 'start';
 div.style.zIndex = '100';
 div.style.display = 'block';
 document.body.appendChild(div);
 
+let timer = 0.0;
+let lastFps = 0.0;
 
-function createStats() {
-  var stats = new Stats();
-  stats.setMode(0);
-
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.left = '0';
-  stats.domElement.style.top = '0';
-
-  return stats;
+export function updateStats() {
+    timer += Time.deltaTime;
+    if (timer >= 0.1) {
+        timer = 0.0;
+        lastFps = Math.floor(1 / Time.deltaTime);
+    }
+    div.innerHTML = `FPS: ${lastFps}\nX: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`;
 }
-
-export var stats = createStats();
-document.body.appendChild(stats.domElement);
 
 document.body.appendChild(renderer.domElement);
 
 
 
 window.addEventListener('resize', function () {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camaraPerspetiva.aspect = window.innerWidth / window.innerHeight;
-  camaraPerspetiva.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camaraPerspetiva.aspect = window.innerWidth / window.innerHeight;
+    camaraPerspetiva.updateProjectionMatrix();
 });
 
 export { cena, renderer, camaraPerspetiva };

@@ -1,21 +1,25 @@
 import { PointerLockControls } from 'PointerLockControls';
 import { cena, renderer, camaraPerspetiva } from './scene.js';
+import { Time } from './time.js';
+import { Audio } from './audio.js';
 
+var controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
-const controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
-
-
-var up = false;
-var down = false;
+var front = false;
+var back = false;
 var left = false;
 var right = false;
+var up = false;
+var down = false;
 
 controls.addEventListener('lock', function () { });
 controls.addEventListener('unlock', function () { });
+
 document.addEventListener(
     'click',
     function () {
         controls.lock();
+        Audio.Start();
     },
     false
 );
@@ -27,10 +31,10 @@ function onDocumentKeyDown(event) {
     var keycode = event.which;
 
     if (keycode == 87) {
-        up = true;
+        front = true;
     }
     else if (keycode == 83) {
-        down = true;
+        back = true;
     }
     else if (keycode == 65) {
         left = true;
@@ -39,10 +43,10 @@ function onDocumentKeyDown(event) {
         right = true;
     }
     else if (keycode == 32) {
-        camaraPerspetiva.position.y += 1;
+        up = true;
     }
     else if (keycode == 16) {
-        camaraPerspetiva.position.y -= 1;
+        down = true;
     }
     else if (keycode == 70) {
         enableSun = !enableSun;
@@ -53,10 +57,10 @@ function onDocumentKeyUp(event) {
     var keycode = event.which;
 
     if (keycode == 87) {
-        up = false;
+        front = false;
     }
     else if (keycode == 83) {
-        down = false;
+        back = false;
     }
     else if (keycode == 65) {
         left = false;
@@ -64,14 +68,20 @@ function onDocumentKeyUp(event) {
     else if (keycode == 68) {
         right = false;
     }
+    else if (keycode == 32) {
+        up = false;
+    }
+    else if (keycode == 16) {
+        down = false;
+    }
 }
 
 
 export function movement() {
-    document.getElementById('Coords').innerHTML = `X: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`;
-
-    if (up) controls.moveForward(0.25);
-    if (down) controls.moveForward(-0.25);
-    if (left) controls.moveRight(-0.25);
-    if (right) controls.moveRight(0.25);
+    if (up) camaraPerspetiva.position.y += 20 * Time.deltaTime;
+    if (down) camaraPerspetiva.position.y -= 20 * Time.deltaTime;
+    if (front) controls.moveForward(20 * Time.deltaTime);
+    if (back) controls.moveForward(-20 * Time.deltaTime);
+    if (left) controls.moveRight(-20 * Time.deltaTime);
+    if (right) controls.moveRight(20 * Time.deltaTime);
 }

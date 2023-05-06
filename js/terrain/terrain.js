@@ -7,6 +7,7 @@ import * as THREE from 'three';
 export class Terrain {
     constructor() {
         this.chunks = {};
+        this.cachedChunks = {};
         this.chunkDistance = 4;
         this.blockAmount = [];
         this.mesh = [];
@@ -33,6 +34,7 @@ export class Terrain {
         for (let i in this.chunks) {
             for (let j in this.chunks[i]) {
                 let chunk = this.chunks[i][j];
+
                 for (let x = 0; x < chunk.chunkSize; x++) {
                     for (let y = 0; y < chunk.chunkHeight; y++) {
                         for (let z = 0; z < chunk.chunkSize; z++) {
@@ -59,6 +61,7 @@ export class Terrain {
         for (let i in this.chunks) {
             for (let j in this.chunks[i]) {
                 let chunk = this.chunks[i][j];
+
                 for (let x = 0; x < chunk.chunkSize; x++) {
                     for (let y = 0; y < chunk.chunkHeight; y++) {
                         for (let z = 0; z < chunk.chunkSize; z++) {
@@ -91,8 +94,21 @@ export class Terrain {
 
             for (let z = Math.floor(camaraPerspetiva.position.z / 16) - this.chunkDistance; z < Math.floor(camaraPerspetiva.position.z / 16) + this.chunkDistance; z++) {
                 if (this.chunks[x][z] != undefined) continue;
+                if (this.cachedChunks[x] != undefined && this.cachedChunks[x][z] != undefined) {
+                    this.chunks[x][z] = this.cachedChunks[x][z];
+                    continue;
+                }
+
                 this.chunks[x][z] = new Chunk(x, z);
                 this.chunks[x][z].CreateMesh();
+            }
+        }
+
+        for (let i in this.chunks) {
+            if (this.cachedChunks[i] == undefined) this.cachedChunks[i] = {};
+            for (let j in this.chunks[i]) {
+                if (this.cachedChunks[i][j] != undefined) continue;
+                this.cachedChunks[i][j] = this.chunks[i][j];
             }
         }
 

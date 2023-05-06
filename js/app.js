@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import vertCode from './shaders/skyboxVert.js';
 import fragCode from './shaders/skyboxFrag.js';
-import { cena, renderer, camaraPerspetiva, stats } from './scene.js';
+import { cena, renderer, camaraPerspetiva, updateStats } from './scene.js';
 import { movement } from './input.js'
 import { Terrain } from './terrain/terrain.js';
+import { Time } from './time.js';
+import { Audio } from './audio.js';
 
 let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
@@ -53,6 +55,8 @@ let lastPosZ = 0;
 const terrain = new Terrain();
 
 function loop() {
+    Time.update();
+    updateStats();
     skyboxShader.uniforms.enableSun.value = enableSun;
     skyboxShader.needsUpdate = true;
 
@@ -68,7 +72,6 @@ function loop() {
     skybox.position.set(camaraPerspetiva.position.x, camaraPerspetiva.position.y, camaraPerspetiva.position.z);
     skybox.needsUpdate = true;
 
-    stats.update();
     renderer.render(cena, camaraPerspetiva);
 
     requestAnimationFrame(loop);
