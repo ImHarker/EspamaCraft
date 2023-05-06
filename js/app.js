@@ -12,13 +12,14 @@ let sunDir = new THREE.Vector3(0.5, 0.5, 0);
 
 document.addEventListener('DOMContentLoaded', Start);
 
-
 function Start() {
     var focoLuz = new THREE.AmbientLight('#666666', 1);
     cena.add(focoLuz);
     let dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(sunDir.x, sunDir.y, sunDir.z);
     cena.add(dirLight);
+
+    cena.fog = new THREE.Fog(0xcccccc, 35, 70);
 
     renderer.render(cena, camaraPerspetiva);
     requestAnimationFrame(loop);

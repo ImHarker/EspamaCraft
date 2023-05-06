@@ -142,8 +142,16 @@ export class Chunk {
     }
 
     CreateMesh() {
+        let R = 25;
+        let bluenoise = [];
+
         for (let x = 0; x < this.chunkSize; x++) {
+            bluenoise.push([]);
             for (let z = 0; z < this.chunkSize; z++) {
+                let nx = x / this.chunkSize - 0.5;
+                let nz = z / this.chunkSize - 0.5;
+                bluenoise[x].push(perlin.get(50 * (nx + this.offsetX), 50 * (nz + this.offsetZ)));
+
                 let y = Math.floor(perlin.get((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) * this.amplitude) + 16;
 
                 this.blocks[x][y][z].type = BlockType.Grass;
@@ -156,21 +164,10 @@ export class Chunk {
             }
         }
 
-        let R = 25;
-        let bluenoise = [];
-        for (let x = 0; x < this.chunkSize; x++) {
-            bluenoise.push([]);
-            for (let z = 0; z < this.chunkSize; z++) {
-                let nx = x / this.chunkSize - 0.5;
-                let nz = z / this.chunkSize - 0.5;
-
-                bluenoise[x].push(perlin.get(50 * (nx + this.offsetX), 50 * (nz + this.offsetZ)));
-            }
-        }
-
         for (let x = 2; x < this.chunkSize - 2; x++) {
             for (let z = 2; z < this.chunkSize - 2; z++) {
                 let max = 0;
+
                 for (let dz = -R; dz <= R; dz++) {
                     for (let dx = -R; dx <= R; dx++) {
                         let nx = x + dx;

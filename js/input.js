@@ -50,6 +50,8 @@ function onDocumentKeyDown(event) {
     }
     else if (keycode == 70) {
         enableSun = !enableSun;
+    } else if (keycode == 77) {
+        Audio.sound.stop();
     }
 }
 

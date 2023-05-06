@@ -21,7 +21,6 @@ export class Audio {
 
         if (Audio.curSound == 0) {
             audioLoader.load('../audio/sweden.mp3', (buffer) => {
-                console.log(buffer);
                 Audio.sound.setBuffer(buffer);
                 Audio.sound.setLoop(true);
                 Audio.sound.setVolume(0.1);
