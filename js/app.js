@@ -5,7 +5,7 @@ import { cena, renderer, camaraPerspetiva, updateStats } from './scene.js';
 import { movement } from './input.js'
 import { Terrain } from './terrain/terrain.js';
 import { Time } from './time.js';
-import { Audio } from './audio.js';
+import { updateMinimap } from './minimap.js';
 
 let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
@@ -74,6 +74,7 @@ function loop() {
     skybox.needsUpdate = true;
 
     renderer.render(cena, camaraPerspetiva);
+    updateMinimap();
 
     requestAnimationFrame(loop);
 }
