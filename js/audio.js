@@ -3,7 +3,7 @@ import { camaraPerspetiva } from './scene.js';
 
 export class Audio {
 
-    static curSound = 0;
+    static curSound = Math.floor(Math.random() * 2);
     static sound;
 
     static Start() {

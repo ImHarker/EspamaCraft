@@ -20,7 +20,7 @@ function Start() {
     cena.add(dirLight);
 
     cena.fog = new THREE.Fog(0xcccccc, 35, 70);
-
+    
     renderer.render(cena, camaraPerspetiva);
     requestAnimationFrame(loop);
 }

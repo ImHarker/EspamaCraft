@@ -4,6 +4,9 @@ import { BlockType } from "./blockType.js";
 import { cena } from "../scene.js";
 import * as THREE from 'three';
 
+let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+let dummy = new THREE.Object3D();
+
 export class Terrain {
     constructor() {
         this.chunks = {};
@@ -22,15 +25,12 @@ export class Terrain {
         }
 
         this.mesh = [];
-        let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
         Object.keys(BlockType).forEach(key => {
             this.mesh.push(new THREE.InstancedMesh(cubeGeometry, BlockType[key].material, this.blockAmount[BlockType[key].id]));
             this.mesh[BlockType[key].id].instanceMatrix.setUsage(THREE.DynamicDrawUsage);
             cena.add(this.mesh[BlockType[key].id]);
         });
-
-        let dummy = new THREE.Object3D();
 
         for (let i in this.chunks) {
             for (let j in this.chunks[i]) {
@@ -57,7 +57,7 @@ export class Terrain {
         }
     }
 
-    Update() {
+    GenerateChunks() {
         for (let x in this.chunks) {
             this.chunks[x] = {};
         }
@@ -82,6 +82,8 @@ export class Terrain {
                 else {
                     this.chunks[i][j] = new Chunk(i, j);
                     this.chunks[i][j].CreateMesh();
+                    if(this.cachedChunks[i] == undefined) this.cachedChunks[i] = {};
+                    this.cachedChunks[i][j] = this.chunks[i][j];
                 }
 
                 let chunk = this.chunks[i][j];
@@ -97,15 +99,10 @@ export class Terrain {
                 }
             }
         }
+    }
 
-        for (let i in this.chunks) {
-            if (this.cachedChunks[i] == undefined) this.cachedChunks[i] = {};
-            for (let j in this.chunks[i]) {
-                if (this.cachedChunks[i][j] != undefined) continue;
-                this.cachedChunks[i][j] = this.chunks[i][j];
-            }
-        }
-
+    Update() {
+        this.GenerateChunks();
         this.GenerateMesh();
     }
 }

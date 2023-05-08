@@ -7,7 +7,7 @@ minimaprenderer.setSize(256, 256);
 let minimapCamera = new THREE.OrthographicCamera(-45, 45, 45, -45, 0, 10000);
 minimapCamera.layers.enable(1);
 minimapCamera.up = new THREE.Vector3(0, 0, -1);
-minimapCamera.lookAt(new THREE.Vector3(0, -1, 0))
+minimapCamera.lookAt(new THREE.Vector3(0, -1, 0));
 cena.add(minimapCamera);
 let div = document.createElement('div');
 div.id = 'Minimap';
