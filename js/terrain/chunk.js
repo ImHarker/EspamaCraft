@@ -1,8 +1,5 @@
 import { BlockType } from "./blockType.js";
 import { Block } from "./block.js";
-import { cena } from "../scene.js";
-import { perlin } from "./perlin.js";
-import * as THREE from 'three';
 
 export class Chunk {
     chunkSize = 16;
@@ -28,6 +25,25 @@ export class Chunk {
         }
     }
 
+    GetBlock(x, y, z) {
+        if(x < 0) {
+            // Get terrain chunk x - 1
+            return new Block();
+        } else if(x >= this.chunkSize) {
+            // Get terrain chunk x + 1
+            return new Block();
+        }
+        if(z < 0) {
+            // Get terrain chunk z - 1
+            return new Block();
+        } else if(z >= this.chunkSize) {
+            // Get terrain chunk z + 1
+            return new Block();
+        }
+
+        return this.blocks[x][y][z];
+    }
+
     ActivateBlocks() {
         for (let x = 0; x < this.chunkSize; x++) {
             for (let y = 0; y < this.chunkHeight; y++) {
@@ -39,17 +55,11 @@ export class Chunk {
 
                     let isBlockVisible = false;
 
-                    //if (x == 0 || x == this.chunkSize - 1 || y == 0 || y == this.chunkHeight - 1 || z == 0 || z == this.chunkSize - 1) isBlockVisible = true;
-
-                    if (x > 0) {
-                        if (this.blocks[x - 1][y][z].type.transparent) {
-                            isBlockVisible = true;
-                        }
+                    if (this.GetBlock(x - 1, y, z).type.transparent) {
+                        isBlockVisible = true;
                     }
-                    if (x < this.chunkSize - 1) {
-                        if (this.blocks[x + 1][y][z].type.transparent) {
-                            isBlockVisible = true;
-                        }
+                    if (this.GetBlock(x + 1, y, z).type.transparent) {
+                        isBlockVisible = true;
                     }
                     if (y > 0) {
                         if (this.blocks[x][y - 1][z].type.transparent) {
@@ -61,15 +71,11 @@ export class Chunk {
                             isBlockVisible = true;
                         }
                     }
-                    if (z > 0) {
-                        if (this.blocks[x][y][z - 1].type.transparent) {
-                            isBlockVisible = true;
-                        }
+                    if (this.GetBlock(x, y, z - 1).type.transparent) {
+                        isBlockVisible = true;
                     }
-                    if (z < this.chunkSize - 1) {
-                        if (this.blocks[x][y][z + 1].type.transparent) {
-                            isBlockVisible = true;
-                        }
+                    if (this.GetBlock(x, y, z + 1).type.transparent) {
+                        isBlockVisible = true;
                     }
 
                     this.blocks[x][y][z].isActive = isBlockVisible;
@@ -141,6 +147,17 @@ export class Chunk {
         this.blocks[x - 2][y + 3][z + 2].type = BlockType.OakLeaves;
     }
 
+    BuildCactus(x, y, z) {
+        for(let i = 1; i < Math.floor(Math.random() * 3) + 2; i++) {
+            this.blocks[x][y + i][z].type = BlockType.Cactus;
+        }
+    }
+
+    Lerp(a, b, t) {
+        if(t > 1) t = 1;
+        return (1 - t) * a + t * b;
+    }
+
     CreateMesh() {
         let R = 25;
         let bluenoise = [];
@@ -150,11 +167,27 @@ export class Chunk {
             for (let z = 0; z < this.chunkSize; z++) {
                 let nx = x / this.chunkSize - 0.5;
                 let nz = z / this.chunkSize - 0.5;
-                bluenoise[x].push(perlin.get(50 * (nx + this.offsetX), 50 * (nz + this.offsetZ)));
+                bluenoise[x].push((noise.simplex2(50 * (nx + this.offsetX), 50 * (nz + this.offsetZ)) + 1) / 2);
+                
+                let biome = (noise.simplex2((x + this.offsetX) * this.frequency * 0.5, (z + this.offsetZ) * this.frequency * 0.5) + 1) / 2;
+                
+                let y = 0;
 
-                let y = Math.floor(perlin.get((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) * this.amplitude) + 16;
+                let grassHeight = Math.floor((noise.simplex2((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) * this.amplitude / 1.75) + 1) / 2 + this.amplitude / 1.75;
+                let sandHeight = Math.floor((noise.simplex2((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) * this.amplitude / 5) + 1) / 2 + this.amplitude / 5;
 
-                this.blocks[x][y][z].type = BlockType.Grass;
+                if (biome > 0.5) {
+                    let blendFactor = (biome - 0.5) * 2;
+                    blendFactor = Math.sqrt(blendFactor);
+                    
+                    y = Math.floor(this.Lerp(sandHeight, grassHeight, blendFactor));
+                    
+                    this.blocks[x][y][z].type = BlockType.Grass;
+                }
+                else {
+                    y = Math.floor(sandHeight);
+                    this.blocks[x][y][z].type = BlockType.Sand;
+                }
 
                 let yBuilder = 0;
                 while (yBuilder < y) {
@@ -184,6 +217,8 @@ export class Chunk {
                     for (let y = 0; y < this.chunkHeight; y++) {
                         if (this.blocks[x][y][z].type == BlockType.Grass) {
                             this.BuildTree(x, y, z);
+                        } else if (this.blocks[x][y][z].type == BlockType.Sand) {
+                            this.BuildCactus(x, y, z);
                         }
                     }
                 }

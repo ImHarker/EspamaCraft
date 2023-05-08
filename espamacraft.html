@@ -16,13 +16,16 @@
     <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 
     <script type="importmap">
-            {
-                "imports": {
-                    "three": "https://unpkg.com/three@0.151.2/build/three.module.js",
-                    "PointerLockControls": "https://unpkg.com/three@0.151.2/examples/jsm/controls/PointerLockControls.js"
-                }
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.151.2/build/three.module.js",
+                "PointerLockControls": "https://unpkg.com/three@0.151.2/examples/jsm/controls/PointerLockControls.js"
             }
-        </script>
+        }
+    </script>
+
+    <script src="./js/terrain/perlin.js"></script>
+
     <script type="module" src="./js/shaders/skyboxVert.js"></script>
     <script type="module" src="./js/terrain/terrain.js"></script>
     <script type="module" src="./js/minimap.js"></script>

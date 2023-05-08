@@ -9,7 +9,6 @@ let dummy = new THREE.Object3D();
 
 export class Terrain {
     constructor() {
-        this.chunks = {};
         this.cachedChunks = {};
         this.chunkDistance = 4;
         this.blockAmount = [];
@@ -32,9 +31,9 @@ export class Terrain {
             cena.add(this.mesh[BlockType[key].id]);
         });
 
-        for (let i in this.chunks) {
-            for (let j in this.chunks[i]) {
-                let chunk = this.chunks[i][j];
+        for (let i = Math.floor(camaraPerspetiva.position.x / 16) - this.chunkDistance; i < Math.floor(camaraPerspetiva.position.x / 16) + this.chunkDistance; i++) {
+            for (let j = Math.floor(camaraPerspetiva.position.z / 16) - this.chunkDistance; j < Math.floor(camaraPerspetiva.position.z / 16) + this.chunkDistance; j++) {
+                let chunk = this.cachedChunks[i][j];
 
                 for (let x = 0; x < chunk.chunkSize; x++) {
                     for (let y = 0; y < chunk.chunkHeight; y++) {
@@ -58,11 +57,6 @@ export class Terrain {
     }
 
     GenerateChunks() {
-        for (let x in this.chunks) {
-            this.chunks[x] = {};
-        }
-        this.chunks = {};
-
         this.counter = [];
         this.blockAmount = [];
 
@@ -72,21 +66,18 @@ export class Terrain {
         });
 
         for (let i = Math.floor(camaraPerspetiva.position.x / 16) - this.chunkDistance; i < Math.floor(camaraPerspetiva.position.x / 16) + this.chunkDistance; i++) {
-            if (this.chunks[i] == undefined) this.chunks[i] = {};
-
             for (let j = Math.floor(camaraPerspetiva.position.z / 16) - this.chunkDistance; j < Math.floor(camaraPerspetiva.position.z / 16) + this.chunkDistance; j++) {
-                if (this.chunks[i][j] != undefined) continue;
-                if (this.cachedChunks[i] != undefined && this.cachedChunks[i][j] != undefined) {
-                    this.chunks[i][j] = this.cachedChunks[i][j];
-                }
-                else {
-                    this.chunks[i][j] = new Chunk(i, j);
-                    this.chunks[i][j].CreateMesh();
-                    if(this.cachedChunks[i] == undefined) this.cachedChunks[i] = {};
-                    this.cachedChunks[i][j] = this.chunks[i][j];
+                if (this.cachedChunks[i] == undefined) {
+                    this.cachedChunks[i] = {};
                 }
 
-                let chunk = this.chunks[i][j];
+                if(this.cachedChunks[i][j] == undefined) {
+                    let tempChunk = new Chunk(i, j);
+                    tempChunk.CreateMesh();
+                    this.cachedChunks[i][j] = tempChunk;
+                }
+
+                let chunk = this.cachedChunks[i][j];
 
                 for (let x = 0; x < chunk.chunkSize; x++) {
                     for (let y = 0; y < chunk.chunkHeight; y++) {

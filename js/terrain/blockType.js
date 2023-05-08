@@ -13,6 +13,15 @@ var oakLogTopTexture = new THREE.TextureLoader().load('../../img/oak_log_top.png
 oakLogTopTexture.magFilter = THREE.NearestFilter;
 var oakLeavesTexture = new THREE.TextureLoader().load('../../img/oak_leaves.png');
 oakLeavesTexture.magFilter = THREE.NearestFilter;
+var sandTexture = new THREE.TextureLoader().load('../../img/sand.png');
+sandTexture.magFilter = THREE.NearestFilter;
+
+var cactusTopTexture = new THREE.TextureLoader().load('../../img/cactus_top.png');
+cactusTopTexture.magFilter = THREE.NearestFilter;
+var cactusSideTexture = new THREE.TextureLoader().load('../../img/cactus_side.png');
+cactusSideTexture.magFilter = THREE.NearestFilter;
+var cactusBottomTexture = new THREE.TextureLoader().load('../../img/cactus_bottom.png');
+cactusBottomTexture.magFilter = THREE.NearestFilter;
 
 let debug = false;
 
@@ -60,6 +69,25 @@ export const BlockType = {
         name: "oak_leaves",
         material: new THREE.MeshStandardMaterial({ map: oakLeavesTexture, wireframe: debug, transparent: true }),
         transparent: true
+    },
+    Sand: {
+        id: 5,
+        name: "sand",
+        material: new THREE.MeshStandardMaterial({ map: sandTexture, wireframe: debug }),
+        transparent: false
+    },
+    Cactus: {
+        id: 6,
+        name: "cactus",
+        material: [
+            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug }),
+            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug }),
+            new THREE.MeshStandardMaterial({ map: cactusTopTexture, wireframe: debug }),
+            new THREE.MeshStandardMaterial({ map: cactusBottomTexture, wireframe: debug }),
+            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug }),
+            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug })
+        ],
+        transparent: false
     }
     /*,
     Stone: "stone",
