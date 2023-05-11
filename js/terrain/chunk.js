@@ -5,10 +5,12 @@ export class Chunk {
     chunkSize = 16;
     chunkHeight = 64;
     blockAmount = [];
+    terrain = undefined;
 
-    constructor(offsetX, offsetZ) {
-        this.frequency = 0.03;
+    constructor(offsetX, offsetZ, terrain) {
+        this.frequency = 0.015;
         this.amplitude = 16;
+        this.terrain = terrain;
 
         this.offsetX = offsetX * this.chunkSize;
         this.offsetZ = offsetZ * this.chunkSize;
@@ -26,19 +28,8 @@ export class Chunk {
     }
 
     GetBlock(x, y, z) {
-        if(x < 0) {
-            // Get terrain chunk x - 1
-            return new Block();
-        } else if(x >= this.chunkSize) {
-            // Get terrain chunk x + 1
-            return new Block();
-        }
-        if(z < 0) {
-            // Get terrain chunk z - 1
-            return new Block();
-        } else if(z >= this.chunkSize) {
-            // Get terrain chunk z + 1
-            return new Block();
+        if (x < 0 || x >= this.chunkSize || y < 0 || y >= this.chunkHeight || z < 0 || z >= this.chunkSize) {
+            return this.terrain.GetBlock(x + this.offsetX, y, z + this.offsetZ);
         }
 
         return this.blocks[x][y][z];
@@ -55,12 +46,17 @@ export class Chunk {
 
                     let isBlockVisible = false;
 
-                    if (this.GetBlock(x - 1, y, z).type.transparent) {
-                        isBlockVisible = true;
+                    if(this.GetBlock(x - 1, y, z) != undefined) {
+                        if (this.GetBlock(x - 1, y, z).type.transparent) {
+                            isBlockVisible = true;
+                        }
                     }
-                    if (this.GetBlock(x + 1, y, z).type.transparent) {
-                        isBlockVisible = true;
+                    if(this.GetBlock(x + 1, y, z) != undefined) {
+                        if (this.GetBlock(x + 1, y, z).type.transparent) {
+                            isBlockVisible = true;
+                        }
                     }
+                    
                     if (y > 0) {
                         if (this.blocks[x][y - 1][z].type.transparent) {
                             isBlockVisible = true;
@@ -71,11 +67,16 @@ export class Chunk {
                             isBlockVisible = true;
                         }
                     }
-                    if (this.GetBlock(x, y, z - 1).type.transparent) {
-                        isBlockVisible = true;
+
+                    if(this.GetBlock(x, y, z - 1) != undefined) {
+                        if (this.GetBlock(x, y, z - 1).type.transparent) {
+                            isBlockVisible = true;
+                        }
                     }
-                    if (this.GetBlock(x, y, z + 1).type.transparent) {
-                        isBlockVisible = true;
+                    if(this.GetBlock(x, y, z + 1) != undefined) {
+                        if (this.GetBlock(x, y, z + 1).type.transparent) {
+                            isBlockVisible = true;
+                        }
                     }
 
                     this.blocks[x][y][z].isActive = isBlockVisible;
@@ -169,12 +170,13 @@ export class Chunk {
                 let nz = z / this.chunkSize - 0.5;
                 bluenoise[x].push((noise.simplex2(50 * (nx + this.offsetX), 50 * (nz + this.offsetZ)) + 1) / 2);
                 
-                let biome = (noise.simplex2((x + this.offsetX) * this.frequency * 0.5, (z + this.offsetZ) * this.frequency * 0.5) + 1) / 2;
+                let biome = (noise.simplex2((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) + 1) / 2;
                 
                 let y = 0;
 
-                let grassHeight = Math.floor((noise.simplex2((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) * this.amplitude / 1.75) + 1) / 2 + this.amplitude / 1.75;
-                let sandHeight = Math.floor((noise.simplex2((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency) * this.amplitude / 5) + 1) / 2 + this.amplitude / 5;
+                let yNoise = noise.simplex2((x + this.offsetX) * this.frequency, (z + this.offsetZ) * this.frequency);
+                let grassHeight = Math.floor((yNoise * this.amplitude / 1.75) + 1) / 2 + this.amplitude / 1.75;
+                let sandHeight = Math.floor((yNoise * this.amplitude / 5) + 1) / 2 + this.amplitude / 5;
 
                 if (biome > 0.5) {
                     let blendFactor = (biome - 0.5) * 2;
@@ -224,7 +226,5 @@ export class Chunk {
                 }
             }
         }
-
-        this.ActivateBlocks();
     }
 }

@@ -1,7 +1,8 @@
 import { PointerLockControls } from 'PointerLockControls';
-import { cena, renderer, camaraPerspetiva } from './scene.js';
+import { renderer, camaraPerspetiva } from './scene.js';
 import { Time } from './time.js';
 import { Audio } from './audio.js';
+import { paused, TogglePauseMenu } from './pauseMenu.js';
 
 var controls = new PointerLockControls(camaraPerspetiva, renderer.domElement);
 
@@ -18,6 +19,7 @@ controls.addEventListener('unlock', function () { });
 document.addEventListener(
     'click',
     function () {
+        if(paused) return;
         controls.lock();
         Audio.Start();
     },
@@ -48,9 +50,12 @@ function onDocumentKeyDown(event) {
     else if (keycode == 16) {
         down = true;
     }
-    else if (keycode == 70) {
-        enableSun = !enableSun;
-    } else if (keycode == 77) {
+    else if (keycode == 80) {
+        TogglePauseMenu();
+        if(paused) controls.unlock();
+        else controls.lock();
+    }
+    else if (keycode == 77) {
         Audio.sound.stop();
     }
 }

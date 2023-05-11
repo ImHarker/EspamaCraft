@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { camaraPerspetiva } from './scene.js';
+import { GetCookie } from "./cookies.js";
 
 export class Audio {
 
@@ -23,7 +24,7 @@ export class Audio {
             audioLoader.load('../audio/sweden.mp3', (buffer) => {
                 Audio.sound.setBuffer(buffer);
                 Audio.sound.setLoop(true);
-                Audio.sound.setVolume(0.1);
+                Audio.sound.setVolume(GetCookie("volume") / 100.0);
                 Audio.sound.onEnded = () => {
                     Audio.curSound = 1;
                     Audio.Start();
@@ -34,7 +35,7 @@ export class Audio {
             audioLoader.load('../audio/minecraft.mp3', (buffer) => {
                 Audio.sound.setBuffer(buffer);
                 Audio.sound.setLoop(true);
-                Audio.sound.setVolume(0.1);
+                Audio.sound.setVolume(GetCookie("volume") / 100.0);
                 Audio.sound.onEnded = () => {
                     Audio.curSound = 0;
                     Audio.Start();
