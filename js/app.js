@@ -1,6 +1,16 @@
 import * as THREE from 'three';
-import vertCode from './shaders/skyboxVert.js';
-import fragCode from './shaders/skyboxFrag.js';
+import {
+    skyboxVertCode
+} from './shaders/skyboxVert.js';
+import {
+    skyboxFragCode
+} from './shaders/skyboxFrag.js';
+import {
+    wireframeVertCode
+} from './shaders/wireframeVert.js';
+import {
+    wireframeFragCode
+} from './shaders/wireframeFrag.js';
 import {
     cena,
     renderer,
@@ -19,6 +29,9 @@ import {
 import {
     updateMinimap
 } from './minimap.js';
+import {
+    BlockType
+} from './terrain/blockType.js';
 
 let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
@@ -102,8 +115,8 @@ var skyboxShader = new THREE.ShaderMaterial({
             value: enableSun
         }
     },
-    vertexShader: vertCode,
-    fragmentShader: fragCode,
+    vertexShader: skyboxVertCode,
+    fragmentShader: skyboxFragCode,
     side: THREE.BackSide
 });
 
@@ -116,15 +129,21 @@ let lastPosZ = 0;
 
 const terrain = new Terrain();
 
-// let points = [
-//     new THREE.Vector3(0, 0, 0),
-//     new THREE.Vector3(0, 0, 16),
-// ];
+let hitbox = new THREE.Mesh(new THREE.BoxGeometry(1.001, 1.001, 1.001), new THREE.MeshBasicMaterial({
+    color: 0xEEEEEE,
+    transparent: true,
+    opacity: 0.3
+}));
 
-// let line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({
-//     color: 0xff0000
-// }));
-// cena.add(line);
+let addBlock = false;
+let removeBlock = false;
+
+document.addEventListener('click', (event) => {
+    if (event.button == 0) removeBlock = true;
+});
+document.addEventListener('mousedown', (event) => {
+    if (event.button == 2) addBlock = true;
+});
 
 function loop() {
     Time.update();
@@ -138,20 +157,133 @@ function loop() {
         terrain.Update();
     }
 
-    // Camera direction line
-    /*let vector = new THREE.Vector3(0, 0, -1);
-    vector.applyQuaternion(camaraPerspetiva.quaternion);
+    let raycaster = new THREE.Raycaster();
+    let pointer = new THREE.Vector2();
 
-    let camPos = new THREE.Vector3(camaraPerspetiva.position.x, camaraPerspetiva.position.y, camaraPerspetiva.position.z);
+    raycaster.setFromCamera(pointer, camaraPerspetiva);
+    let intersects = raycaster.intersectObjects(cena.children);
 
-    line.geometry.dispose();
-    points = [
-        new THREE.Vector3(camPos.x, camPos.y - .1, camPos.z).add(new THREE.Vector3(vector.x, vector.y, vector.z).multiplyScalar(.1)),
-        new THREE.Vector3(camPos.x, camPos.y - .1, camPos.z).add(new THREE.Vector3(vector.x, vector.y, vector.z).multiplyScalar(10)),
-    ];
-    line.geometry = new THREE.BufferGeometry().setFromPoints(points);
-    line.needsUpdate = true;*/
+    const parent = hitbox.parent;
+    if (parent != undefined) {
+        parent.remove(hitbox);
+    }
 
+    for (let i = 0; i < intersects.length; i++) {
+        if (intersects[i].distance > 6.8) continue;
+        if (intersects[i].object == undefined) continue;
+        if (intersects[i].object == skybox) continue;
+        if (intersects[i].object == hitbox) continue;
+        let point = intersects[i].point;
+        // if (intersects[i].normal.x == 1) {
+        //     point.add(new THREE.Vector3(-0.5, 0, 0));
+        // } else if (intersects[i].normal.x == -1) {
+        //     point.add(new THREE.Vector3(0.5, 0, 0));
+        // }
+        // if (intersects[i].normal.y == 1) {
+        //     point.add(new THREE.Vector3(0, -0.5, 0));
+        // } else if (intersects[i].normal.y == -1) {
+        //     point.add(new THREE.Vector3(0, 0.5, 0));
+        // }
+        // if (intersects[i].normal.z == 1) {
+        //     point.add(new THREE.Vector3(0, 0, -0.5));
+        // } else if (intersects[i].normal.z == -1) {
+        //     point.add(new THREE.Vector3(0, 0, 0.5));
+        // }
+
+        let faceNormal = intersects[i].face.normal;
+        let offset = faceNormal;
+        offset.multiplyScalar(0.5);
+        point.copy(intersects[i].point).add(offset);
+
+        let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
+        if (!block.isActive) continue;
+        intersects[i].object.add(hitbox);
+        hitbox.position.set(Math.round(point.x), Math.round(point.y), Math.round(point.z));
+        break;
+    }
+
+    if (addBlock) {
+        for (let i = 0; i < intersects.length; i++) {
+            if (intersects[i].distance > 7) continue;
+            if (intersects[i].object == undefined) continue;
+            if (intersects[i].object == skybox) continue;
+            if (intersects[i].object == hitbox) continue;
+            let point = intersects[i].point;
+            // if (intersects[i].normal.x == 1) {
+            //     point.add(new THREE.Vector3(-0.5, 0, 0));
+            // } else if (intersects[i].normal.x == -1) {
+            //     point.add(new THREE.Vector3(0.5, 0, 0));
+            // }
+            // if (intersects[i].normal.y == 1) {
+            //     point.add(new THREE.Vector3(0, -0.5, 0));
+            // } else if (intersects[i].normal.y == -1) {
+            //     point.add(new THREE.Vector3(0, 0.5, 0));
+            // }
+            // if (intersects[i].normal.z == 1) {
+            //     point.add(new THREE.Vector3(0, 0, -0.5));
+            // } else if (intersects[i].normal.z == -1) {
+            //     point.add(new THREE.Vector3(0, 0, 0.5));
+            // }
+
+            let faceNormal = intersects[i].face.normal;
+            let offset = faceNormal;
+            offset.multiplyScalar(0.5);
+            point.copy(intersects[i].point).add(offset);
+
+
+            let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
+            if (!block.isActive) continue;
+            let newPos = point.clone().add(intersects[i].normal);
+            let newBlock = terrain.GetBlock(Math.round(newPos.x), Math.round(newPos.y), Math.round(newPos.z));
+            if (newBlock == undefined) continue;
+            if (newBlock.type != BlockType.Default) continue;
+            newBlock.type = BlockType.Dirt;
+            terrain.cachedChunks[Math.floor(Math.round(newPos.x) / 16)][Math.floor(Math.round(newPos.z) / 16)].ActivateBlocks();
+            terrain.GenerateChunks();
+            terrain.GenerateMesh();
+            break;
+        }
+        addBlock = false;
+    }
+
+    if (removeBlock) {
+        for (let i = 0; i < intersects.length; i++) {
+            if (intersects[i].distance > 7) continue;
+            if (intersects[i].object == undefined) continue;
+            if (intersects[i].object == skybox) continue;
+            if (intersects[i].object == hitbox) continue;
+            let point = intersects[i].point;
+            // if (intersects[i].normal.x == 1) {
+            //     point.add(new THREE.Vector3(-0.5, 0, 0));
+            // } else if (intersects[i].normal.x == -1) {
+            //     point.add(new THREE.Vector3(0.5, 0, 0));
+            // }
+            // if (intersects[i].normal.y == 1) {
+            //     point.add(new THREE.Vector3(0, -0.5, 0));
+            // } else if (intersects[i].normal.y == -1) {
+            //     point.add(new THREE.Vector3(0, 0.5, 0));
+            // }
+            // if (intersects[i].normal.z == 1) {
+            //     point.add(new THREE.Vector3(0, 0, -0.5));
+            // } else if (intersects[i].normal.z == -1) {
+            //     point.add(new THREE.Vector3(0, 0, 0.5));
+            // }
+            let faceNormal = intersects[i].face.normal;
+            let offset = faceNormal;
+            offset.multiplyScalar(0.5);
+            point.copy(intersects[i].point).add(offset);
+
+            let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
+            if (!block.isActive) continue;
+            if (block.type == BlockType.Default) continue;
+            block.type = BlockType.Default;
+            terrain.cachedChunks[Math.floor(Math.round(point.x) / 16)][Math.floor(Math.round(point.z) / 16)].ActivateBlocks();
+            terrain.GenerateChunks();
+            terrain.GenerateMesh();
+            break;
+        }
+        removeBlock = false;
+    }
 
     // Detect down collision
     /*let block = terrain.GetBlock(Math.floor(camaraPerspetiva.position.x), Math.floor(camaraPerspetiva.position.y) - 2, Math.floor(camaraPerspetiva.position.z));
