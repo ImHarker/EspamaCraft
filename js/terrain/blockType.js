@@ -36,56 +36,120 @@ export const BlockType = {
         id: 1,
         name: "grass",
         material: [
-            new THREE.MeshStandardMaterial({ map: grassSideTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: grassSideTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: grassTopTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: dirtTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: grassSideTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: grassSideTexture, wireframe: debug })
+            new THREE.MeshStandardMaterial({
+                map: grassSideTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: grassSideTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: grassTopTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: dirtTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: grassSideTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: grassSideTexture,
+                wireframe: debug
+            })
         ],
         transparent: false
     },
     Dirt: {
         id: 2,
         name: "dirt",
-        material: new THREE.MeshStandardMaterial({ map: dirtTexture, wireframe: debug }),
+        material: new THREE.MeshStandardMaterial({
+            map: dirtTexture,
+            wireframe: debug
+        }),
         transparent: false
     },
     OakLog: {
         id: 3,
         name: "oak_log",
         material: [
-            new THREE.MeshStandardMaterial({ map: oakLogTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: oakLogTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: oakLogTopTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: oakLogTopTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: oakLogTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: oakLogTexture, wireframe: debug })
+            new THREE.MeshStandardMaterial({
+                map: oakLogTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: oakLogTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: oakLogTopTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: oakLogTopTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: oakLogTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: oakLogTexture,
+                wireframe: debug
+            })
         ],
         transparent: false
     },
     OakLeaves: {
         id: 4,
         name: "oak_leaves",
-        material: new THREE.MeshStandardMaterial({ map: oakLeavesTexture, wireframe: debug, transparent: true }),
+        material: new THREE.MeshStandardMaterial({
+            map: oakLeavesTexture,
+            wireframe: debug,
+            transparent: true
+        }),
         transparent: true
     },
     Sand: {
         id: 5,
         name: "sand",
-        material: new THREE.MeshStandardMaterial({ map: sandTexture, wireframe: debug }),
+        material: new THREE.MeshStandardMaterial({
+            map: sandTexture,
+            wireframe: debug
+        }),
         transparent: false
     },
     Cactus: {
         id: 6,
         name: "cactus",
         material: [
-            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: cactusTopTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: cactusBottomTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug }),
-            new THREE.MeshStandardMaterial({ map: cactusSideTexture, wireframe: debug })
+            new THREE.MeshStandardMaterial({
+                map: cactusSideTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: cactusSideTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: cactusTopTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: cactusBottomTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: cactusSideTexture,
+                wireframe: debug
+            }),
+            new THREE.MeshStandardMaterial({
+                map: cactusSideTexture,
+                wireframe: debug
+            })
         ],
         transparent: false
     }

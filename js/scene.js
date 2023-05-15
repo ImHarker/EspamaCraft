@@ -26,6 +26,7 @@ div.style.padding = '5px';
 div.style.textAlign = 'start';
 div.style.zIndex = '100';
 div.style.display = 'block';
+div.style.cursor = 'default';
 document.body.appendChild(div);
 
 let timer = 0.0;

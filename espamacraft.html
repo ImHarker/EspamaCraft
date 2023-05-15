@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=VT323">
     <style>
         body {
-            font-family:  "VT323", monospace !important;
+            font-family: "VT323", monospace !important;
             margin: 0;
         }
 
@@ -28,7 +28,7 @@
 
         button {
             width: 40%;
-            height: 45px;
+            height: 10%;
             margin: 0.5rem;
             background-color: #9b9b9b;
             border-color: #8b8b8b;
@@ -37,16 +37,21 @@
             font-size: 2vw;
             font-weight: 500;
             cursor: pointer;
+            z-index: 5;
+        }
+
+        .crosshair {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            color: #fff;
+            font-size: 2rem;
+            font-family: monospace;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            transform: translate(-50%, -50%);
+            cursor: default;
         }
     </style>
-</head>
-
-<body>
-    <div class="hidden" id="pauseMenu">
-        <button id="toggleSun">Toggle Sun</button>
-        <button id="toggleAmbient" style="margin-top: 1rem;">Toggle Ambient</button>
-        <button id="togglePointLights" style="margin-top: 1rem;">Toggle Point Lights</button>
-    </div>
 
     <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 
@@ -58,6 +63,18 @@
             }
         }
     </script>
+</head>
+
+<body>
+    <div class="hidden" id="pauseMenu">
+        <button id="toggleSun">Toggle Sun</button>
+        <button id="toggleAmbient" style="margin-top: 1rem;">Toggle Ambient</button>
+        <button id="togglePointLights" style="margin-top: 1rem;">Toggle Point Lights</button>
+    </div>
+
+    <div class="crosshair">
+        +
+    </div>
 
     <script src="./js/terrain/perlin.js"></script>
 

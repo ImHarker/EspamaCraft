@@ -6,10 +6,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=VT323">
     <style>
         body {
-            font-family:  VT323, Lucida Console, monospace !important;
+            font-family: VT323, Lucida Console, monospace !important;
             margin: 0;
         }
-        .bg-img{
+
+        .bg-img {
             position: fixed;
             left: 0;
             right: 0;
@@ -17,15 +18,18 @@
             display: block;
             background-image: url("./img/background.png");
             filter: blur(8px);
-            transform: scale(1.1); 
+            transform: scale(1.1);
+            background-size: cover;
         }
+
         .content * {
             z-index: 1;
         }
-        button{
+
+        button {
             margin-top: 25px;
-            width: 10%;
-            height: 45px;
+            width: 12%;
+            height: 2%;
             background-color: #9b9b9b;
             border-color: #8b8b8b;
             border-radius: 0.5rem;
@@ -34,6 +38,7 @@
             font-weight: 500;
             cursor: pointer;
         }
+
         .slider {
             -webkit-appearance: none;
             appearance: none;
@@ -46,9 +51,11 @@
             transition: opacity .2s;
             border: 2.5px solid #111;
         }
+
         .slider:hover {
             opacity: 1;
         }
+
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -58,6 +65,7 @@
             cursor: pointer;
             border: solid 2px #000;
         }
+
         .slider::-moz-range-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -74,31 +82,35 @@
     <div class="bg-img" style="height: 100%;"></div>
     <div class="content" style="width: 100%;">
         <div style="display: flex; justify-content: center;">
-            <div style= "margin-top: 5rem; font-size: 8rem; font-weight: 500; text-shadow: 0 2px 1px #2b2b2b, 
-      -1px 3px 1px #3b3b3b, 
-      -2px 5px 1px #4b4b4b, 
-      -3px 7px 1px #5b5b5b,
-      -4px 9px 1px #6b6b6b,
-      -5px 11px 1px #7b7b7b,
-      -6px 13px 1px #8b8b8b,
-      -7px 15px 1px #9b9b9b;">
-                ESPAMACRAFT
-            </div>
+            <div style="color: #cccccc; margin-top: 5rem; font-size: 8rem; font-weight: 500; text-shadow: 0 2px 1px #9b9b9b, 
+      -1px 3px 1px #8b8b8b, 
+      -2px 5px 1px #7b7b7b, 
+      -3px 7px 1px #6b6b6b,
+      -4px 9px 1px #5b5b5b,
+      -5px 11px 1px #4b4b4b,
+      -6px 13px 1px #3b3b3b,
+      -7px 15px 1px #2b2b2b;">ESPAMACRAFT</div>
         </div>
         <div style="display: flex; align-items: center; flex-direction: column;">
             <div style="margin-top: 5rem; display: flex; width: 20%;flex-direction: column; ">
-                <p style="font-size: 2.5vw; align-self: center; margin-bottom: 5px; margin-top: 0; text-shadow: -0.75px 0.75px 0 #FFF, 0.75px 0.75px 0 #FFF, 0.75px -0.75px 0 #FFF, -0.75px -0.75px 0 #FFF;">Render Distance</p>
+                <p
+                    style="font-size: 2.5vw; align-self: center; margin-bottom: 5px; margin-top: 0; text-shadow: -0.75px 0.75px 0 #FFF, 0.75px 0.75px 0 #FFF, 0.75px -0.75px 0 #FFF, -0.75px -0.75px 0 #FFF;">
+                    Render Distance</p>
                 <div style="width: 100%; display: flex;">
                     <input type="range" min="1" max="8" value="4" class="slider" id="renderDistanceSlider">
-                    <p style="width: 5%; font-size: 2vw; align-self: center; margin-left: 10px; margin-top: -3px; margin-bottom: 0;" id="renderDistanceValue"></p>
+                    <p style="width: 5%; font-size: 2vw; align-self: center; margin-left: 10px; margin-top: -3px; margin-bottom: 0;"
+                        id="renderDistanceValue"></p>
                 </div>
             </div>
 
             <div style="margin-top: 1rem; display: flex; width: 20%;flex-direction: column; ">
-                <p style="font-size: 2.5vw; align-self: center; margin-bottom: 5px; margin-top: 0; text-shadow: -0.75px 0.75px 0 #FFF, 0.75px 0.75px 0 #FFF, 0.75px -0.75px 0 #FFF, -0.75px -0.75px 0 #FFF;">Music Volume</p>
+                <p
+                    style="font-size: 2.5vw; align-self: center; margin-bottom: 5px; margin-top: 0; text-shadow: -0.75px 0.75px 0 #FFF, 0.75px 0.75px 0 #FFF, 0.75px -0.75px 0 #FFF, -0.75px -0.75px 0 #FFF;">
+                    Music Volume</p>
                 <div style="width: 100%; display: flex;">
                     <input type="range" min="0" max="100" value="75" class="slider" id="volumeSlider">
-                    <p style="width: 5%; font-size: 2vw; align-self: center; margin-left: 10px; margin-top: -3px; margin-bottom: 0;" id="volumeValue"></p>
+                    <p style="width: 5%; font-size: 2vw; align-self: center; margin-left: 10px; margin-top: -3px; margin-bottom: 0;"
+                        id="volumeValue"></p>
                 </div>
             </div>
 

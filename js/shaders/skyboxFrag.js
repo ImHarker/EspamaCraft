@@ -1,4 +1,4 @@
-const fragCode = /* GLSL */ `
+export const skyboxFragCode = /* GLSL */ `
     uniform vec3 topColor;
     uniform vec3 bottomColor;
     uniform float offset;
@@ -70,5 +70,3 @@ const fragCode = /* GLSL */ `
         }
     }
 `;
-
-export default fragCode;
