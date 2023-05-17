@@ -1,12 +1,13 @@
 import * as THREE from 'three';
-import { Time } from './time.js';
+import {
+    Time
+} from './time.js';
 
 var cena = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
-var camaraPerspetiva = new THREE.PerspectiveCamera(90, 16 / 9, 0.1, 500);
-camaraPerspetiva.position.set(0, 25, 0);
-renderer.setSize(window.innerWidth, window.innerHeight);
+var camaraPerspetiva = new THREE.PerspectiveCamera(90, 16 / 9, 0.01, 500);
 
+renderer.setSize(window.innerWidth, window.innerHeight);
 
 let div = document.createElement('div');
 div.id = 'Stats';
@@ -38,7 +39,7 @@ export function updateStats() {
         timer = 0.0;
         lastFps = Math.floor(1 / Time.deltaTime);
     }
-    div.innerHTML = `FPS: ${lastFps}\nX: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`;
+    div.innerHTML = `FPS: ${lastFps}\nX: ${camaraPerspetiva.parent.position.x.toFixed(1)}\nY: ${camaraPerspetiva.parent.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.parent.position.z.toFixed(1)}`;
 }
 
 document.body.appendChild(renderer.domElement);
@@ -49,4 +50,8 @@ window.addEventListener('resize', function () {
     camaraPerspetiva.updateProjectionMatrix();
 });
 
-export { cena, renderer, camaraPerspetiva };
+export {
+    cena,
+    renderer,
+    camaraPerspetiva
+};

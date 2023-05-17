@@ -48,6 +48,22 @@ export class Terrain {
         return chunk.blocks[x - chunk.offsetX][y][z - chunk.offsetZ];
     }
 
+    GetHeight(x, z) {
+        let height = 0;
+
+        for (let i = 0; i < Chunk.chunkHeight; i++) {
+            let block = this.GetBlock(x, i, z);
+
+            if (block.type != BlockType.Default) {
+                height = i;
+            } else {
+                break;
+            }
+        }
+
+        return height;
+    }
+
     GenerateMesh() {
         for (let i = 0; i < this.mesh.length; i++) {
             cena.remove(this.mesh[i]);

@@ -6,20 +6,11 @@ import {
     skyboxFragCode
 } from './shaders/skyboxFrag.js';
 import {
-    wireframeVertCode
-} from './shaders/wireframeVert.js';
-import {
-    wireframeFragCode
-} from './shaders/wireframeFrag.js';
-import {
     cena,
     renderer,
     camaraPerspetiva,
     updateStats
 } from './scene.js';
-import {
-    movement
-} from './input.js'
 import {
     Terrain
 } from './terrain/terrain.js';
@@ -30,8 +21,11 @@ import {
     updateMinimap
 } from './minimap.js';
 import {
-    BlockType
-} from './terrain/blockType.js';
+    AimController
+} from './aimController.js';
+import {
+    Player
+} from './player.js';
 
 let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
@@ -46,7 +40,12 @@ dirLight.position.set(sunDir.x, sunDir.y, sunDir.z);
 let pointLight = new THREE.PointLight(0xffffff, 1, 16);
 pointLight.name = "pointLight";
 
+export const terrain = new Terrain();
+const aimController = new AimController();
+export const player = new Player(camaraPerspetiva);
+
 function Start() {
+    cena.add(player.object);
     cena.add(focoLuz);
     cena.add(dirLight);
 
@@ -127,23 +126,7 @@ cena.add(skybox);
 let lastPosX = 0;
 let lastPosZ = 0;
 
-const terrain = new Terrain();
-
-let hitbox = new THREE.Mesh(new THREE.BoxGeometry(1.001, 1.001, 1.001), new THREE.MeshBasicMaterial({
-    color: 0xEEEEEE,
-    transparent: true,
-    opacity: 0.3
-}));
-
-let addBlock = false;
-let removeBlock = false;
-
-document.addEventListener('click', (event) => {
-    if (event.button == 0) removeBlock = true;
-});
-document.addEventListener('mousedown', (event) => {
-    if (event.button == 2) addBlock = true;
-});
+let playerSpawned = false;
 
 function loop() {
     Time.update();
@@ -151,157 +134,18 @@ function loop() {
     skyboxShader.uniforms.enableSun.value = enableSun;
     skyboxShader.needsUpdate = true;
 
-    movement();
-
     if (lastPosX != Math.floor(camaraPerspetiva.position.x / 16) || lastPosZ != Math.floor(camaraPerspetiva.position.z / 16)) {
         terrain.Update();
     }
 
-    let raycaster = new THREE.Raycaster();
-    let pointer = new THREE.Vector2();
-
-    raycaster.setFromCamera(pointer, camaraPerspetiva);
-    let intersects = raycaster.intersectObjects(cena.children);
-
-    const parent = hitbox.parent;
-    if (parent != undefined) {
-        parent.remove(hitbox);
+    if (Time.time > 1 && !playerSpawned) {
+        playerSpawned = true;
+        let y = terrain.GetHeight(0, 0);
+        player.object.position.set(0, y + 3, 0);
     }
 
-    for (let i = 0; i < intersects.length; i++) {
-        if (intersects[i].distance > 6.8) continue;
-        if (intersects[i].object == undefined) continue;
-        if (intersects[i].object == skybox) continue;
-        if (intersects[i].object == hitbox) continue;
-        let point = intersects[i].point;
-        // if (intersects[i].normal.x == 1) {
-        //     point.add(new THREE.Vector3(-0.5, 0, 0));
-        // } else if (intersects[i].normal.x == -1) {
-        //     point.add(new THREE.Vector3(0.5, 0, 0));
-        // }
-        // if (intersects[i].normal.y == 1) {
-        //     point.add(new THREE.Vector3(0, -0.5, 0));
-        // } else if (intersects[i].normal.y == -1) {
-        //     point.add(new THREE.Vector3(0, 0.5, 0));
-        // }
-        // if (intersects[i].normal.z == 1) {
-        //     point.add(new THREE.Vector3(0, 0, -0.5));
-        // } else if (intersects[i].normal.z == -1) {
-        //     point.add(new THREE.Vector3(0, 0, 0.5));
-        // }
-
-        let faceNormal = intersects[i].face.normal;
-        let offset = faceNormal;
-        offset.multiplyScalar(0.5);
-        point.copy(intersects[i].point).add(offset);
-
-        let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
-        if (!block.isActive) continue;
-        intersects[i].object.add(hitbox);
-        hitbox.position.set(Math.round(point.x), Math.round(point.y), Math.round(point.z));
-        break;
-    }
-
-    if (addBlock) {
-        for (let i = 0; i < intersects.length; i++) {
-            if (intersects[i].distance > 7) continue;
-            if (intersects[i].object == undefined) continue;
-            if (intersects[i].object == skybox) continue;
-            if (intersects[i].object == hitbox) continue;
-            let point = intersects[i].point;
-            // if (intersects[i].normal.x == 1) {
-            //     point.add(new THREE.Vector3(-0.5, 0, 0));
-            // } else if (intersects[i].normal.x == -1) {
-            //     point.add(new THREE.Vector3(0.5, 0, 0));
-            // }
-            // if (intersects[i].normal.y == 1) {
-            //     point.add(new THREE.Vector3(0, -0.5, 0));
-            // } else if (intersects[i].normal.y == -1) {
-            //     point.add(new THREE.Vector3(0, 0.5, 0));
-            // }
-            // if (intersects[i].normal.z == 1) {
-            //     point.add(new THREE.Vector3(0, 0, -0.5));
-            // } else if (intersects[i].normal.z == -1) {
-            //     point.add(new THREE.Vector3(0, 0, 0.5));
-            // }
-
-            let faceNormal = intersects[i].face.normal;
-            let offset = faceNormal;
-            offset.multiplyScalar(0.5);
-            point.copy(intersects[i].point).add(offset);
-
-
-            let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
-            if (!block.isActive) continue;
-            let newPos = point.clone().add(intersects[i].normal);
-            let newBlock = terrain.GetBlock(Math.round(newPos.x), Math.round(newPos.y), Math.round(newPos.z));
-            if (newBlock == undefined) continue;
-            if (newBlock.type != BlockType.Default) continue;
-            newBlock.type = BlockType.Dirt;
-            terrain.cachedChunks[Math.floor(Math.round(newPos.x) / 16)][Math.floor(Math.round(newPos.z) / 16)].ActivateBlocks();
-            terrain.GenerateChunks();
-            terrain.GenerateMesh();
-            break;
-        }
-        addBlock = false;
-    }
-
-    if (removeBlock) {
-        for (let i = 0; i < intersects.length; i++) {
-            if (intersects[i].distance > 7) continue;
-            if (intersects[i].object == undefined) continue;
-            if (intersects[i].object == skybox) continue;
-            if (intersects[i].object == hitbox) continue;
-            let point = intersects[i].point;
-            // if (intersects[i].normal.x == 1) {
-            //     point.add(new THREE.Vector3(-0.5, 0, 0));
-            // } else if (intersects[i].normal.x == -1) {
-            //     point.add(new THREE.Vector3(0.5, 0, 0));
-            // }
-            // if (intersects[i].normal.y == 1) {
-            //     point.add(new THREE.Vector3(0, -0.5, 0));
-            // } else if (intersects[i].normal.y == -1) {
-            //     point.add(new THREE.Vector3(0, 0.5, 0));
-            // }
-            // if (intersects[i].normal.z == 1) {
-            //     point.add(new THREE.Vector3(0, 0, -0.5));
-            // } else if (intersects[i].normal.z == -1) {
-            //     point.add(new THREE.Vector3(0, 0, 0.5));
-            // }
-            let faceNormal = intersects[i].face.normal;
-            let offset = faceNormal;
-            offset.multiplyScalar(0.5);
-            point.copy(intersects[i].point).add(offset);
-
-            let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
-            if (!block.isActive) continue;
-            if (block.type == BlockType.Default) continue;
-            block.type = BlockType.Default;
-            terrain.cachedChunks[Math.floor(Math.round(point.x) / 16)][Math.floor(Math.round(point.z) / 16)].ActivateBlocks();
-            terrain.GenerateChunks();
-            terrain.GenerateMesh();
-            break;
-        }
-        removeBlock = false;
-    }
-
-    // Detect down collision
-    /*let block = terrain.GetBlock(Math.floor(camaraPerspetiva.position.x), Math.floor(camaraPerspetiva.position.y) - 2, Math.floor(camaraPerspetiva.position.z));
-    if (block != undefined) {
-        if (block.isActive) {
-            console.log(
-                new THREE.Box3(
-                    camaraPerspetiva.position - new THREE.Vector3(-0.5, -1, -0.5),
-                    camaraPerspetiva.position + new THREE.Vector3(0.5, 1, 0.5)
-                ).intersectsBox(
-                    new THREE.Box3(
-                        new THREE.Vector3(block.x - 0.5, block.y - 0.5, block.z - 0.5),
-                        new THREE.Vector3(block.x + 0.5, block.y + 0.5, block.z + 0.5)
-                    )
-                )
-            );
-        }
-    }*/
+    aimController.Update();
+    player.Update();
 
     lastPosX = Math.floor(camaraPerspetiva.position.x / 16);
     lastPosZ = Math.floor(camaraPerspetiva.position.z / 16);

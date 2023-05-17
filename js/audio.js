@@ -1,10 +1,15 @@
 import * as THREE from 'three';
-import { camaraPerspetiva } from './scene.js';
-import { GetCookie } from "./cookies.js";
+import {
+    camaraPerspetiva
+} from './scene.js';
+import {
+    GetCookie
+} from "./cookies.js";
 
 export class Audio {
 
     static curSound = Math.floor(Math.random() * 2);
+    static isPlaying = false;
     static sound;
 
     static Start() {
@@ -16,7 +21,8 @@ export class Audio {
             Audio.sound = new THREE.Audio(listener);
         }
 
-        if (Audio.sound.isPlaying) return;
+        if (Audio.isPlaying) return;
+        Audio.isPlaying = true;
 
         const audioLoader = new THREE.AudioLoader();
 
@@ -27,6 +33,7 @@ export class Audio {
                 Audio.sound.setVolume(GetCookie("volume") / 100.0);
                 Audio.sound.onEnded = () => {
                     Audio.curSound = 1;
+                    Audio.isPlaying = false;
                     Audio.Start();
                 };
                 Audio.sound.play();
@@ -38,6 +45,7 @@ export class Audio {
                 Audio.sound.setVolume(GetCookie("volume") / 100.0);
                 Audio.sound.onEnded = () => {
                     Audio.curSound = 0;
+                    Audio.isPlaying = false;
                     Audio.Start();
                 };
                 Audio.sound.play();
