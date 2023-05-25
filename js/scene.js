@@ -11,8 +11,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 let div = document.createElement('div');
 div.id = 'Stats';
-const newContent = document.createTextNode(`FPS: ${Math.floor(1 / Time.deltaTime)}\nX: ${camaraPerspetiva.position.x.toFixed(1)}\nY: ${camaraPerspetiva.position.y.toFixed(1)}\nZ: ${camaraPerspetiva.position.z.toFixed(1)}`);
-div.appendChild(newContent);
 div.style.position = 'absolute';
 div.style.whiteSpace = 'pre-wrap';
 div.style.top = '5px';

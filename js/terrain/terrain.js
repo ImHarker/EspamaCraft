@@ -54,6 +54,7 @@ export class Terrain {
         for (let i = 0; i < Chunk.chunkHeight; i++) {
             let block = this.GetBlock(x, i, z);
 
+            if(block == undefined) continue;
             if (block.type != BlockType.Default) {
                 height = i;
             } else {
@@ -77,8 +78,8 @@ export class Terrain {
             cena.add(this.mesh[BlockType[key].id]);
         });
 
-        for (let i = Math.floor(camaraPerspetiva.position.x / 16) - this.chunkDistance; i <= Math.floor(camaraPerspetiva.position.x / 16) + this.chunkDistance; i++) {
-            for (let j = Math.floor(camaraPerspetiva.position.z / 16) - this.chunkDistance; j <= Math.floor(camaraPerspetiva.position.z / 16) + this.chunkDistance; j++) {
+        for (let i = Math.floor(camaraPerspetiva.parent.position.x / 16) - this.chunkDistance; i <= Math.floor(camaraPerspetiva.parent.position.x / 16) + this.chunkDistance; i++) {
+            for (let j = Math.floor(camaraPerspetiva.parent.position.z / 16) - this.chunkDistance; j <= Math.floor(camaraPerspetiva.parent.position.z / 16) + this.chunkDistance; j++) {
                 let chunk = this.cachedChunks[i][j];
 
                 for (let x = 0; x < Chunk.chunkSize; x++) {
@@ -113,8 +114,8 @@ export class Terrain {
 
         let chunksToActivate = [];
 
-        for (let i = Math.floor(camaraPerspetiva.position.x / 16) - this.chunkDistance; i <= Math.floor(camaraPerspetiva.position.x / 16) + this.chunkDistance; i++) {
-            for (let j = Math.floor(camaraPerspetiva.position.z / 16) - this.chunkDistance; j <= Math.floor(camaraPerspetiva.position.z / 16) + this.chunkDistance; j++) {
+        for (let i = Math.floor(camaraPerspetiva.parent.position.x / 16) - this.chunkDistance; i <= Math.floor(camaraPerspetiva.parent.position.x / 16) + this.chunkDistance; i++) {
+            for (let j = Math.floor(camaraPerspetiva.parent.position.z / 16) - this.chunkDistance; j <= Math.floor(camaraPerspetiva.parent.position.z / 16) + this.chunkDistance; j++) {
                 if (this.cachedChunks[i] == undefined) {
                     this.cachedChunks[i] = {};
                 }
@@ -171,8 +172,8 @@ export class Terrain {
             chunk.ActivateBlocks();
         }
 
-        for (let i = Math.floor(camaraPerspetiva.position.x / 16) - this.chunkDistance; i <= Math.floor(camaraPerspetiva.position.x / 16) + this.chunkDistance; i++) {
-            for (let j = Math.floor(camaraPerspetiva.position.z / 16) - this.chunkDistance; j <= Math.floor(camaraPerspetiva.position.z / 16) + this.chunkDistance; j++) {
+        for (let i = Math.floor(camaraPerspetiva.parent.position.x / 16) - this.chunkDistance; i <= Math.floor(camaraPerspetiva.parent.position.x / 16) + this.chunkDistance; i++) {
+            for (let j = Math.floor(camaraPerspetiva.parent.position.z / 16) - this.chunkDistance; j <= Math.floor(camaraPerspetiva.parent.position.z / 16) + this.chunkDistance; j++) {
                 for (let k = 0; k < this.cachedChunks[i][j].blockAmount.length; k++) {
                     this.blockAmount[k] += this.cachedChunks[i][j].blockAmount[k];
                 }

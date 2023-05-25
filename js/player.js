@@ -3,16 +3,23 @@ import {
     Time
 } from './time.js';
 import {
-    cena
+    cena,
+    renderer
 } from './scene.js';
 import {
     player,
     terrain
 } from './app.js';
 import {
-    BlockType
-} from './terrain/blockType.js';
-
+    PointerLockControls
+} from 'PointerLockControls';
+import {
+    paused,
+    TogglePauseMenu
+} from './pauseMenu.js';
+import {
+    Audio
+} from './audio.js';
 
 export class Player {
     static raycaster = new THREE.Raycaster();
@@ -27,7 +34,7 @@ export class Player {
 
         this.isGrounded = false;
 
-        this.speed = 3;
+        this.speed = 5;
 
         this.velocity = new THREE.Vector3();
 
@@ -38,6 +45,22 @@ export class Player {
 
         document.addEventListener('keydown', this.OnKeyDown.bind(this));
         document.addEventListener('keyup', this.OnKeyUp.bind(this));
+
+        var controls = new PointerLockControls(this.camera, renderer.domElement);
+
+        controls.addEventListener('lock', function () {});
+        controls.addEventListener('unlock', function () {});
+        
+        document.addEventListener(
+            'click',
+            function () {
+                if (paused) return;
+                controls.lock();
+                Audio.Start();
+            },
+            false
+        );
+
     }
 
     OnKeyDown(event) {
@@ -56,11 +79,16 @@ export class Player {
                 break;
             case 32: // Space
                 if (this.isGrounded) {
-                    this.velocity.y = 10;
+                    this.velocity.y = 6.5;
                 }
                 break;
-            case 70:
+            case 70: // F
+                player.velocity.y = 0;
                 player.object.position.y = terrain.GetHeight(Math.floor(player.object.position.x), Math.floor(player.object.position.z)) + 1.5;
+                break;
+            case 80: // P
+                TogglePauseMenu();
+                break;
         }
     }
 
@@ -120,7 +148,26 @@ export class Player {
         // Check for collisions
         this.Collide();
 
-        this.object.position.add(this.velocity.clone().multiplyScalar(Time.deltaTime));
+        let forward = new THREE.Vector3();
+        this.camera.getWorldDirection(forward);
+
+        forward.y = 0;
+        forward.normalize();
+
+        let right = new THREE.Vector3();
+        right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+
+        right.y = 0;
+        right.normalize();
+
+        forward.multiplyScalar(-this.velocity.z);
+        right.multiplyScalar(this.velocity.x);
+
+        console.log(forward, right);
+
+        this.object.position.add(forward.clone().multiplyScalar(Time.deltaTime));
+        this.object.position.add(right.clone().multiplyScalar(Time.deltaTime));
+        this.object.position.add(new THREE.Vector3(0, this.velocity.y * Time.deltaTime, 0));
         this.object.needsUpdate = true;
     }
 
@@ -233,8 +280,8 @@ export class Player {
             let block = terrain.GetBlock(Math.floor(this.object.position.x), Math.floor(this.object.position.y + 0.5), Math.floor(this.object.position.z));
             if (block != undefined) {
                 if (block.isActive) {
-                    this.object.position.y = Math.floor(this.object.position.y) + 0.5;
                     this.velocity.y = 0;
+                    this.object.position.y = terrain.GetHeight(Math.floor(this.object.position.x), Math.floor(this.object.position.z)) + 0.5;
                 }
             }
         }

@@ -34,7 +34,7 @@ cena.add(player);
 
 
 export function updateMinimap() {
-    minimapCamera.position.set(camaraPerspetiva.position.x, 50, camaraPerspetiva.position.z);
-    player.position.set(camaraPerspetiva.position.x, 49, camaraPerspetiva.position.z);
+    minimapCamera.position.set(camaraPerspetiva.parent.position.x, 50, camaraPerspetiva.parent.position.z);
+    player.position.set(camaraPerspetiva.parent.position.x, 49, camaraPerspetiva.parent.position.z);
     minimaprenderer.render(cena, minimapCamera);
 }
