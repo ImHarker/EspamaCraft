@@ -51,6 +51,36 @@
             transform: translate(-50%, -50%);
             cursor: default;
         }
+
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            background-color: rgba(211, 211, 211, 0.8);
+            border-radius: 0.5rem;
+            padding: 0.2rem;
+            padding-right: 1rem;
+            padding-left: 1rem;
+        }
+
+        .slot {
+            width: 60px;
+            height: 60px;
+            margin: 0 10px;
+            border: 3px solid #888;
+            border-radius: 5px;
+        }
+
+        .slot img {
+            max-width: 100%;
+            max-height: 100%;
+        }
     </style>
 
     <script async="" src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
@@ -67,10 +97,21 @@
 </head>
 
 <body>
+    <div class="hotbar">
+        <div class="slot">
+            <img src="slot1.png" alt="1">
+        </div>
+        <div class="slot">
+            <img src="slot2.png" alt="2">
+        </div>
+    </div>
+
+
     <div class="hidden" id="pauseMenu">
         <button id="toggleSun">Toggle Sun</button>
         <button id="toggleAmbient" style="margin-top: 1rem;">Toggle Ambient</button>
         <button id="togglePointLights" style="margin-top: 1rem;">Toggle Point Lights</button>
+        <button id="toggleSpotLights" style="margin-top: 1rem;">Toggle Spot Lights</button>
     </div>
 
     <div class="crosshair">

@@ -23,6 +23,9 @@ cactusSideTexture.magFilter = THREE.NearestFilter;
 var cactusBottomTexture = new THREE.TextureLoader().load('../../img/cactus_bottom.png');
 cactusBottomTexture.magFilter = THREE.NearestFilter;
 
+var glowstoneTexture = new THREE.TextureLoader().load('../../img/glowstone.png');
+glowstoneTexture.magFilter = THREE.NearestFilter;
+
 let debug = false;
 
 export const BlockType = {
@@ -152,7 +155,16 @@ export const BlockType = {
             })
         ],
         transparent: false
-    }
+    },
+    Glowstone: {
+        id: 7,
+        name: "glowstone",
+        material: new THREE.MeshStandardMaterial({
+            map: glowstoneTexture,
+            wireframe: debug
+        }),
+        transparent: false
+    },
     /*,
     Stone: "stone",
     Bedrock: "bedrock"*/

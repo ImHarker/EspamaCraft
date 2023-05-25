@@ -20,6 +20,7 @@ let dummy = new THREE.Object3D();
 
 export class Terrain {
     constructor() {
+        this.pointlights = [];
         this.cachedChunks = {};
         this.chunkDistance = parseInt(GetCookie("renderDistance"));
         this.blockAmount = [];
@@ -54,7 +55,7 @@ export class Terrain {
         for (let i = 0; i < Chunk.chunkHeight; i++) {
             let block = this.GetBlock(x, i, z);
 
-            if(block == undefined) continue;
+            if (block == undefined) continue;
             if (block.type != BlockType.Default) {
                 height = i;
             } else {

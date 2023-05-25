@@ -24,7 +24,7 @@ export class AimController {
         this.removeBlock = false;
         this.getBlock = false;
 
-        this.placeBlockType = BlockType.Dirt;
+        this.placeBlockType = BlockType.Glowstone;
 
         document.addEventListener('mousedown', (event) => {
             if (event.button == 0) this.removeBlock = true;
@@ -79,6 +79,12 @@ export class AimController {
                 if (newBlock == undefined) continue;
                 if (newBlock.type != BlockType.Default) continue;
                 newBlock.type = this.placeBlockType;
+
+                if (newBlock.type == BlockType.Glowstone) {
+                    terrain.pointlights.push(new THREE.PointLight(0xffffff, 1, 16));
+                    terrain.pointlights[terrain.pointlights.length - 1].position.set(Math.round(newPos.x), newPos.y + 0.5, Math.round(newPos.z));
+                    cena.add(terrain.pointlights[terrain.pointlights.length - 1]);
+                }
 
                 let chunkX = Math.floor(Math.round(point.x) / 16);
                 let chunkZ = Math.floor(Math.round(point.z) / 16);

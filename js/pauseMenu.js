@@ -1,4 +1,4 @@
-import { ToggleSun, ToggleAmbient, TogglePointLights } from './app.js';
+import { ToggleSun, ToggleAmbient, TogglePointLights, ToggleSpotLights } from './app.js';
 
 let pauseMenu = document.getElementById('pauseMenu');
 pauseMenu.classList.add('hidden');
@@ -12,6 +12,9 @@ toggleAmbientButton.onclick = ToggleAmbient;
 
 let togglePointLightsButton = document.getElementById('togglePointLights');
 togglePointLightsButton.onclick = TogglePointLights;
+
+let toggleSpotLightsButton = document.getElementById('toggleSpotLights');
+toggleSpotLightsButton.onclick = ToggleSpotLights;
 
 export let paused = false;
 

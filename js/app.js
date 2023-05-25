@@ -46,7 +46,7 @@ fbxLoader.load(
         let texture = textureLoader.load('../models/txiken.png');
         texture.magFilter = THREE.NearestFilter;
         let material = new THREE.MeshPhongMaterial({ map: texture, side: THREE.DoubleSide });
-        
+
         object.traverse(function (child) {
             if (child.isMesh) {
                 child.material = material;
@@ -71,14 +71,14 @@ let enableSun = true;
 let sunDir = new THREE.Vector3(0.5, 0.5, 0);
 
 document.addEventListener('DOMContentLoaded', Start);
-
+let spotlight = new THREE.SpotLight(0xffffff, 1, 20, Math.PI / 4, 0.5, 2);
+spotlight.name = "spotlight";
+spotlight.position.set(0, 10, 0);
 let focoLuz = new THREE.AmbientLight('#666666', 1);
 focoLuz.name = "focoLuz";
 let dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.name = "dirLight";
 dirLight.position.set(sunDir.x, sunDir.y, sunDir.z);
-let pointLight = new THREE.PointLight(0xffffff, 1, 16);
-pointLight.name = "pointLight";
 
 export const player = new Player(camaraPerspetiva);
 export const terrain = new Terrain();
@@ -88,7 +88,6 @@ function Start() {
     cena.add(player.object);
     cena.add(focoLuz);
     cena.add(dirLight);
-
     cena.fog = new THREE.Fog(0xcccccc, 35, 70);
 
     renderer.render(cena, camaraPerspetiva);
@@ -115,11 +114,19 @@ export function ToggleAmbient() {
 }
 
 export function TogglePointLights() {
-    let pointLightObject = cena.getObjectByName("pointLight");
-    if (pointLightObject != undefined) {
-        cena.remove(pointLight);
+    cena.traverse(function (node) {
+        if (node instanceof THREE.PointLight) {
+            node.intensity = node.intensity == 0 ? 1 : 0;
+        }
+    });
+}
+
+export function ToggleSpotLights() {
+    let spotLightObject = cena.getObjectByName("spotlight");
+    if (spotLightObject != undefined) {
+        cena.remove(spotlight);
     } else {
-        cena.add(pointLight);
+        cena.add(spotlight);
     }
 }
 
@@ -174,13 +181,13 @@ function loop() {
     skyboxShader.uniforms.enableSun.value = enableSun;
     skyboxShader.needsUpdate = true;
 
-    if(txikenz) {
+    if (txikenz) {
         animationMixer.update(Time.deltaTime);
         txikenz.rotation.y -= Time.deltaTime * Math.PI / 2;
         let txikenDirection = new THREE.Vector3();
         txikenz.getWorldDirection(txikenDirection);
-        txikenz.position.x += txikenDirection.x * 0.1 * Time.deltaTime;
-        txikenz.position.z += txikenDirection.z * 0.1 * Time.deltaTime;
+        txikenz.position.x += txikenDirection.x * Time.deltaTime;
+        txikenz.position.z += txikenDirection.z * Time.deltaTime;
     }
 
     if (lastPosX != Math.floor(camaraPerspetiva.parent.position.x / 16) || lastPosZ != Math.floor(camaraPerspetiva.parent.position.z / 16)) {
@@ -202,8 +209,9 @@ function loop() {
     skybox.position.set(camaraPerspetiva.parent.position.x, camaraPerspetiva.parent.position.y, camaraPerspetiva.parent.position.z);
     skybox.needsUpdate = true;
 
-    pointLight.position.set(camaraPerspetiva.parent.position.x, camaraPerspetiva.parent.position.y + 0.5, camaraPerspetiva.parent.position.z);
-    pointLight.needsUpdate = true;
+
+    if (txikenz != undefined)
+        spotlight.lookAt(txikenz.position);
 
     renderer.render(cena, camaraPerspetiva);
     updateMinimap();

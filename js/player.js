@@ -42,22 +42,23 @@ export class Player {
         this.backward = false;
         this.left = false;
         this.right = false;
+        this.controls = new PointerLockControls(this.camera, renderer.domElement);
+
+        this.controls.addEventListener('lock', function () { });
+        this.controls.addEventListener('unlock', function () { });
 
         document.addEventListener('keydown', this.OnKeyDown.bind(this));
         document.addEventListener('keyup', this.OnKeyUp.bind(this));
 
-        var controls = new PointerLockControls(this.camera, renderer.domElement);
 
-        controls.addEventListener('lock', function () {});
-        controls.addEventListener('unlock', function () {});
-        
+
         document.addEventListener(
             'click',
             function () {
                 if (paused) return;
-                controls.lock();
+                this.controls.lock();
                 Audio.Start();
-            },
+            }.bind(this),
             false
         );
 
@@ -88,7 +89,13 @@ export class Player {
                 break;
             case 80: // P
                 TogglePauseMenu();
+                if (paused) {
+                    this.controls.unlock();
+                } else this.controls.lock();
                 break;
+            case 77: // M
+                if (Audio.sound.isPlaying) Audio.sound.pause();
+                else Audio.sound.play();
         }
     }
 
@@ -163,7 +170,6 @@ export class Player {
         forward.multiplyScalar(-this.velocity.z);
         right.multiplyScalar(this.velocity.x);
 
-        console.log(forward, right);
 
         this.object.position.add(forward.clone().multiplyScalar(Time.deltaTime));
         this.object.position.add(right.clone().multiplyScalar(Time.deltaTime));
