@@ -30,14 +30,13 @@ import {
     FBXLoader
 } from 'FBXLoader';
 
-let txikenz;
-let animationMixer;
+export let txikenz;
+export let animationMixer;
 
 const fbxLoader = new FBXLoader()
 fbxLoader.load(
     '../models/txiken.fbx',
     (object) => {
-
         animationMixer = new THREE.AnimationMixer(object);
         let action = animationMixer.clipAction(object.animations[0]);
         action.play();
@@ -57,9 +56,11 @@ fbxLoader.load(
 
         object.rotation.y = Math.PI;
         object.scale.set(.01, .01, .01);
-        object.position.set(0, 7, -0.5);
+        object.position.set(-0.5, 7, 0);
         cena.add(object);
         txikenz = object;
+
+        txikenz.userData.mixer = animationMixer;
     },
     (progress) => { },
     (error) => {
@@ -73,7 +74,7 @@ let sunDir = new THREE.Vector3(0.5, 0.5, 0);
 document.addEventListener('DOMContentLoaded', Start);
 let spotlight = new THREE.SpotLight(0xffffff, 1, 20, Math.PI / 4, 0.5, 2);
 spotlight.name = "spotlight";
-spotlight.position.set(0, 10, 0);
+spotlight.position.set(0, 8, 0);
 let focoLuz = new THREE.AmbientLight('#666666', 1);
 focoLuz.name = "focoLuz";
 let dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -82,7 +83,7 @@ dirLight.position.set(sunDir.x, sunDir.y, sunDir.z);
 
 export const player = new Player(camaraPerspetiva);
 export const terrain = new Terrain();
-const aimController = new AimController();
+export const aimController = new AimController();
 
 function Start() {
     cena.add(player.object);
@@ -210,8 +211,11 @@ function loop() {
     skybox.needsUpdate = true;
 
 
-    if (txikenz != undefined)
-        spotlight.lookAt(txikenz.position);
+    if (txikenz != undefined) {
+        spotlight.target = txikenz;
+        spotlight.target.updateMatrixWorld();
+        spotlight.needsUpdate = true;
+    }
 
     renderer.render(cena, camaraPerspetiva);
     updateMinimap();

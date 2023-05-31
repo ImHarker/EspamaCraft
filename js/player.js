@@ -50,8 +50,6 @@ export class Player {
         document.addEventListener('keydown', this.OnKeyDown.bind(this));
         document.addEventListener('keyup', this.OnKeyUp.bind(this));
 
-
-
         document.addEventListener(
             'click',
             function () {
@@ -118,6 +116,7 @@ export class Player {
 
     Update() {
         if (Time.time < 5) return;
+        if (paused) return;
 
         this.updateStartPos = this.object.position.clone();
 

@@ -70,16 +70,39 @@
         }
 
         .slot {
+            position: relative;
             width: 60px;
             height: 60px;
             margin: 0 10px;
             border: 3px solid #888;
             border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .slot img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 50%;
+            height: 50%;
+            image-rendering: pixelated;
+        }
+
+        .slotNumber {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 1rem;
+            font-family: monospace;
+            color: #fff;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            vertical-align: top;
+            padding: 0;
+            margin: 0;
+            line-height: 12px;
+        }
+
+        .selected {
+            border: 3px solid #fff;
         }
     </style>
 
@@ -98,11 +121,17 @@
 
 <body>
     <div class="hotbar">
-        <div class="slot">
-            <img src="slot1.png" alt="1">
+        <div class="slot selected" id="hotbar1">
+            <img src="/img/dirt.png" alt="1">
+            <div class="slotNumber">1</div>
         </div>
-        <div class="slot">
-            <img src="slot2.png" alt="2">
+        <div class="slot" id="hotbar2">
+            <img src="/img/oak_log.png" alt="2">
+            <div class="slotNumber">2</div>
+        </div>
+        <div class="slot" id="hotbar3">
+            <img src="/img/glowstone.png" alt="3">
+            <div class="slotNumber">3</div>
         </div>
     </div>
 
@@ -124,6 +153,7 @@
     <script type="module" src="./js/terrain/terrain.js"></script>
     <script type="module" src="./js/minimap.js"></script>
     <script type="module" src="./js/app.js"></script>
+    <script type="module" src="./js/hotbar.js"></script>
 </body>
 
 </html>

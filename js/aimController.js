@@ -4,11 +4,16 @@ import {
     cena
 } from "./scene.js";
 import {
-    terrain
+    terrain,
+    animationMixer,
+    txikenz
 } from "./app.js";
 import {
     BlockType
 } from "./terrain/blockType.js";
+import { paused } from "./pauseMenu.js";
+
+let currentAnimation = 0;
 
 export class AimController {
     static hitbox = new THREE.Mesh(new THREE.BoxGeometry(1.001, 1.001, 1.001), new THREE.MeshBasicMaterial({
@@ -22,18 +27,20 @@ export class AimController {
     constructor() {
         this.addBlock = false;
         this.removeBlock = false;
-        this.getBlock = false;
+        // this.getBlock = false;
 
-        this.placeBlockType = BlockType.Glowstone;
+        this.placeBlockType = BlockType.Dirt;
 
         document.addEventListener('mousedown', (event) => {
             if (event.button == 0) this.removeBlock = true;
-            if (event.button == 1) this.getBlock = true;
+            // if (event.button == 1) this.getBlock = true;
             if (event.button == 2) this.addBlock = true;
         });
     }
 
     Update() {
+        if (paused) return;
+
         AimController.raycaster.setFromCamera(AimController.pointer, camaraPerspetiva);
         let intersects = AimController.raycaster.intersectObjects(cena.children);
 
@@ -46,6 +53,23 @@ export class AimController {
             if (intersects[i].distance > 6.8) continue;
             if (intersects[i].object == undefined) continue;
             if (intersects[i].object == AimController.hitbox) continue;
+
+            if (intersects[i].object.name == "Chicken")
+            {
+                if(this.removeBlock)
+                {
+                    const currentAction = animationMixer.clipAction(txikenz.animations[currentAnimation]);
+                    currentAction.stop();
+
+                    if(++currentAnimation > 2) currentAnimation = 0;
+
+                    const newAction = animationMixer.clipAction(txikenz.animations[currentAnimation]);
+                    newAction.play();
+
+                    this.removeBlock = false;
+                }
+                return;
+            }
 
             let point = intersects[i].point.clone();
             let faceNormal = intersects[i].face.normal.clone();
@@ -82,7 +106,7 @@ export class AimController {
 
                 if (newBlock.type == BlockType.Glowstone) {
                     terrain.pointlights.push(new THREE.PointLight(0xffffff, 1, 16));
-                    terrain.pointlights[terrain.pointlights.length - 1].position.set(Math.round(newPos.x), newPos.y + 0.5, Math.round(newPos.z));
+                    terrain.pointlights[terrain.pointlights.length - 1].position.set(Math.round(newPos.x), Math.round(newPos.y) + 0.5, Math.round(newPos.z));
                     cena.add(terrain.pointlights[terrain.pointlights.length - 1]);
                 }
 
@@ -119,24 +143,24 @@ export class AimController {
             this.addBlock = false;
         }
 
-        if (this.getBlock) {
-            for (let i = 0; i < intersects.length; i++) {
-                if (intersects[i].distance > 7) continue;
-                if (intersects[i].object == undefined) continue;
-                if (intersects[i].object == AimController.hitbox) continue;
+        // if (this.getBlock) {
+        //     for (let i = 0; i < intersects.length; i++) {
+        //         if (intersects[i].distance > 7) continue;
+        //         if (intersects[i].object == undefined) continue;
+        //         if (intersects[i].object == AimController.hitbox) continue;
 
-                let point = intersects[i].point.clone();
-                let faceNormal = intersects[i].face.normal.clone();
-                faceNormal.multiplyScalar(0.5);
-                point.sub(faceNormal);
+        //         let point = intersects[i].point.clone();
+        //         let faceNormal = intersects[i].face.normal.clone();
+        //         faceNormal.multiplyScalar(0.5);
+        //         point.sub(faceNormal);
 
-                let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
-                if (!block.isActive) continue;
-                this.placeBlockType = block.type;
-                break;
-            }
-            this.getBlock = false;
-        }
+        //         let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
+        //         if (!block.isActive) continue;
+        //         this.placeBlockType = block.type;
+        //         break;
+        //     }
+        //     this.getBlock = false;
+        // }
 
         if (this.removeBlock) {
             for (let i = 0; i < intersects.length; i++) {
@@ -151,6 +175,17 @@ export class AimController {
 
                 let block = terrain.GetBlock(Math.round(point.x), Math.round(point.y), Math.round(point.z));
                 if (!block.isActive) continue;
+
+                if (block.type == BlockType.Glowstone) {
+                    for(let i = 0; i < terrain.pointlights.length; i++) {
+                        if(terrain.pointlights[i].position.x == Math.round(point.x) && terrain.pointlights[i].position.y == Math.round(point.y) + 0.5 && terrain.pointlights[i].position.z == Math.round(point.z)) {
+                            cena.remove(terrain.pointlights[i]);
+                            terrain.pointlights.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+
                 block.type = BlockType.Default;
 
                 let chunkX = Math.floor(Math.round(point.x) / 16);
